@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <meta name="description" content="Kartu ucapan digital interaktif untuk orang favoritmu.">
+  <title>For my favorite person — a little web surprise</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f3ee;
+      --white: #fffefa;
+      --ink: #171715;
+      --muted: #77756f;
+      --line: #dedbd3;
+      --soft: #ebe8e0;
+      --shadow: 0 22px 70px rgba(29, 27, 22, .10);
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--sans);
+      background-color: var(--paper);
+      background-image: radial-gradient(rgba(23,23,21,.10) .65px, transparent .65px);
+      background-size: 9px 9px;
+    }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #77756f; outline-offset: 4px; }
+    .site-header {
+      width: min(1160px, calc(100% - 40px)); margin: 0 auto;
+      height: 76px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(23,23,21,.13);
+    }
+    .brand { display: flex; gap: 10px; align-items: center; font-size: 12px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    .brand-mark { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font-family: var(--serif); font-size: 15px; }
+    .header-note { color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+    main { width: min(1160px, calc(100% - 40px)); min-height: calc(100vh - 130px); margin: 0 auto; display: grid; align-items: center; padding: 48px 0 76px; }
+    .screen { display: none; width: 100%; animation: arrive .5s cubic-bezier(.2,.7,.2,1) both; }
+    .screen.active { display: block; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: clamp(36px, 8vw, 110px); }
+    .eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    .eyebrow::before { content: ''; width: 22px; height: 1px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    .hero-title { max-width: 630px; margin: 0; font-family: var(--serif); font-size: clamp(58px, 9.3vw, 126px); font-weight: 400; letter-spacing: -.075em; line-height: .83; }
+    .hero-title span { display: block; }
+    .hero-title .italic { padding-left: .55em; font-style: italic; font-size: .82em; }
+    .hero-copy { max-width: 385px; margin: 30px 0 26px; color: #5f5d57; font-family: var(--serif); font-size: 19px; line-height: 1.6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 11px; }
+    .btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0 20px; border: 1px solid var(--ink); border-radius: 3px; cursor: pointer; transition: transform .2s, background .2s, color .2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-dark { color: var(--white); background: var(--ink); }
+    .btn-dark:hover { background: #383832; }
+    .btn-light { color: var(--ink); background: transparent; }
+    .btn-light:hover { background: rgba(23,23,21,.06); }
+    .btn-text { min-height: 42px; padding: 0 4px; border: 0; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+    .arrow { font-size: 18px; line-height: 0; }
+    .hero-art { position: relative; min-height: 440px; display: grid; place-items: center; }
+    .hero-art::before { content: ''; position: absolute; width: min(380px, 88%); aspect-ratio: 1; border: 1px solid #cfccc4; border-radius: 50%; }
+    .hero-art::after { content: 'A LITTLE SOMETHING FOR YOU'; position: absolute; top: 7%; right: 2%; writing-mode: vertical-rl; font-size: 9px; letter-spacing: .2em; color: var(--muted); }
+    .envelope-art { position: relative; z-index: 1; width: min(315px, 78%); aspect-ratio: 1.2; display: grid; place-items: center; background: #201f1b; box-shadow: 12px 17px 0 #d6d2c8, var(--shadow); transform: rotate(-5deg); }
+    .envelope-art::before { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(255,255,255,.42); }
+    .envelope-art::after { content: ''; position: absolute; bottom: 0; width: 0; height: 0; border-left: 157px solid transparent; border-right: 157px solid transparent; border-bottom: 108px solid #2b2a25; }
+    .envelope-seal { position: relative; z-index: 2; width: 62px; height: 62px; display: grid; place-items: center; margin-top: -4px; color: var(--ink); background: var(--paper); border-radius: 50%; font-family: var(--serif); font-size: 28px; }
+    .envelope-tag { position: absolute; z-index: 3; top: 26%; right: -18px; padding: 10px 14px; color: var(--ink); background: var(--white); border: 1px solid var(--line); font-family: var(--serif); font-size: 14px; transform: rotate(6deg); }
+    .scribble { position: absolute; z-index: 2; left: 6%; bottom: 14%; font-family: var(--serif); font-size: 45px; color: var(--ink); transform: rotate(-12deg); }
+    .footer { width: min(1160px, calc(100% - 40px)); margin: -40px auto 0; padding: 20px 0 26px; border-top: 1px solid rgba(23,23,21,.13); color: var(--muted); display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .05em; }
+    .centered { max-width: 760px; margin: 0 auto; text-align: center; }
+    .screen-title { margin: 0 0 12px; font-family: var(--serif); font-size: clamp(42px, 6.7vw, 78px); font-weight: 400; letter-spacing: -.055em; line-height: .98; }
+    .screen-subtitle { max-width: 510px; margin: 0 auto; color: var(--muted); font-family: var(--serif); font-size: 18px; line-height: 1.6; }
+    .letter-wrap { position: relative; width: min(560px, 100%); margin: 36px auto 0; }
+    .letter-envelope { position: relative; width: min(360px, 82vw); height: 240px; margin: 0 auto; border: 1px solid #111; background: #24231f; box-shadow: 9px 10px 0 #d6d2c8; cursor: pointer; overflow: hidden; }
+    .letter-envelope::before { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(255,255,255,.55); }
+    .letter-flap { position: absolute; inset: 0 0 auto; height: 68%; clip-path: polygon(0 0, 100% 0, 50% 100%); background: #3a3933; transform-origin: top; transition: transform .6s ease; z-index: 3; }
+    .letter-envelope.open .letter-flap { transform: rotateX(180deg); }
+    .letter-envelope.open { overflow: visible; background: #2b2a25; }
+    .letter-envelope .seal { position: absolute; z-index: 4; top: 42%; left: 50%; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: var(--paper); transform: translate(-50%,-50%); font-family: var(--serif); font-size: 24px; transition: opacity .25s; }
+    .letter-envelope.open .seal { opacity: 0; }
+    .letter-paper { position: absolute; z-index: 2; inset: 16px 22px; padding: 25px 24px; color: var(--ink); background: #fffefa; box-shadow: 0 4px 12px rgba(0,0,0,.12); text-align: left; transform: translateY(30px); opacity: 0; transition: transform .55s .18s, opacity .3s .18s; }
+    .letter-envelope.open .letter-paper { transform: translateY(-88px); opacity: 1; }
+    .letter-paper small { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .letter-paper h3 { margin: 9px 0 8px; font-family: var(--serif); font-size: 23px; font-weight: 400; }
+    .letter-paper p { margin: 0; color: #5c5a54; font-family: var(--serif); font-size: 13px; line-height: 1.55; }
+    .letter-help { margin: 31px 0 18px; color: var(--muted); font-size: 12px; }
+    .letter-actions { display: flex; justify-content: center; gap: 10px; }
+    .letter-actions .btn { min-height: 43px; }
+    .progress { display: flex; justify-content: center; align-items: center; gap: 9px; margin-bottom: 22px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    .progress span { display: inline-block; width: 20px; height: 1px; background: #c5c1b8; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 44px 0 0; text-align: left; }
+    .memory-card { min-height: 280px; position: relative; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; color: var(--ink); background: var(--white); border: 1px solid var(--line); box-shadow: 5px 6px 0 #e6e2d9; cursor: pointer; text-align: left; transition: transform .22s, box-shadow .22s; }
+    .memory-card:hover { transform: translateY(-5px) rotate(-.5deg); box-shadow: 8px 11px 0 #e0dcd2; }
+    .card-number { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .15em; }
+    .card-illustration { align-self: center; width: 76px; height: 76px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font-family: var(--serif); font-size: 34px; }
+    .card-bottom h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 25px; font-weight: 400; }
+    .card-bottom p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .card-arrow { position: absolute; top: 21px; right: 22px; font-size: 20px; }
+    .bottom-action { margin-top: 32px; text-align: center; }
+    .paper-card { position: relative; width: min(650px, 100%); margin: 36px auto 0; padding: clamp(30px, 6vw, 66px); background: var(--white); border: 1px solid var(--line); box-shadow: 8px 9px 0 #ddd9cf; text-align: left; }
+    .paper-card::before { content: ''; position: absolute; inset: 13px; pointer-events: none; border: 1px dashed #d3cfc5; }
+    .paper-card .eyebrow { position: relative; }
+    .paper-card h2 { position: relative; margin: 0 0 22px; font-family: var(--serif); font-size: clamp(37px, 6vw, 67px); font-weight: 400; letter-spacing: -.055em; line-height: .96; }
+    .paper-card p { position: relative; max-width: 470px; color: #5f5d57; font-family: var(--serif); font-size: 18px; line-height: 1.75; }
+    .signature { position: relative; margin-top: 30px; font-family: var(--serif); font-size: 25px; font-style: italic; }
+    .final-actions { margin-top: 25px; }
+    dialog { width: min(490px, calc(100% - 30px)); max-height: min(82vh, 750px); padding: 0; overflow: auto; border: 1px solid var(--ink); color: var(--ink); background: var(--white); box-shadow: 0 25px 90px rgba(0,0,0,.24); }
+    dialog::backdrop { background: rgba(20,19,17,.50); backdrop-filter: blur(3px); }
+    .dialog-inner { position: relative; padding: 35px; }
+    .dialog-close { position: absolute; top: 12px; right: 14px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; font-size: 20px; cursor: pointer; }
+    .dialog-kicker { margin: 0 0 11px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    .dialog-title { margin: 0 35px 15px 0; font-family: var(--serif); font-size: 38px; font-weight: 400; letter-spacing: -.04em; line-height: 1; }
+    .dialog-copy { color: #626059; font-family: var(--serif); font-size: 16px; line-height: 1.65; }
+    .cat { width: 115px; height: 100px; display: block; margin: 4px auto 15px; }
+    .report-list { display: grid; gap: 17px; margin: 25px 0; }
+    .report-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; font-size: 12px; }
+    .report-row strong { font-family: var(--serif); font-size: 15px; font-weight: 400; }
+    .grade { font-weight: 750; }
+    .bar { grid-column: 1 / -1; height: 5px; background: #e9e6de; }
+    .bar span { display: block; height: 100%; background: var(--ink); }
+    .report-note { margin: 0; padding: 15px; background: var(--paper); font-family: var(--serif); text-align: center; }
+    .reason-list { display: grid; gap: 11px; margin: 23px 0 0; padding: 0; list-style: none; }
+    .reason-list li { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 11px; border-bottom: 1px solid var(--line); font-family: var(--serif); font-size: 16px; line-height: 1.45; }
+    .reason-list li span { color: var(--muted); font-family: var(--sans); font-size: 10px; padding-top: 3px; }
+    .quiz-art { margin: 24px auto; width: 100px; height: 100px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font-family: var(--serif); font-size: 42px; }
+    .quiz-question { font-family: var(--serif); font-size: 24px; text-align: center; }
+    .quiz-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    .quiz-result { min-height: 24px; margin: 18px 0 0; color: var(--muted); font-family: var(--serif); font-size: 15px; text-align: center; }
+    .dialog-footer { display: flex; justify-content: center; margin-top: 20px; }
+    .dialog-footer .btn { min-height: 43px; }
+    @media (max-width: 760px) {
+      .site-header { height: 64px; }
+      .header-note { display: none; }
+      main { min-height: calc(100svh - 118px); padding: 38px 0 70px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 10px; }
+      .hero-content { order: 1; }
+      .hero-art { order: 0; min-height: 280px; }
+      .hero-art::before { width: 230px; }
+      .envelope-art { width: 235px; }
+      .envelope-art::after { border-left-width: 117px; border-right-width: 117px; border-bottom-width: 80px; }
+      .envelope-tag { right: 2%; top: 23%; }
+      .scribble { left: 10%; bottom: 8%; font-size: 36px; }
+      .hero-title { font-size: clamp(64px, 17vw, 100px); }
+      .hero-copy { font-size: 17px; margin: 23px 0 20px; }
+      .cards { grid-template-columns: 1fr; gap: 12px; margin-top: 30px; }
+      .memory-card { min-height: 170px; display: grid; grid-template-columns: 68px 1fr; grid-template-rows: auto 1fr; gap: 8px 17px; padding: 20px; }
+      .card-number { grid-column: 1 / -1; }
+      .card-illustration { grid-column: 1; grid-row: 2; width: 62px; height: 62px; font-size: 27px; }
+      .card-bottom { grid-column: 2; grid-row: 2; align-self: center; }
+      .card-bottom h3 { font-size: 22px; }
+      .card-arrow { top: auto; bottom: 20px; right: 21px; }
+      .bottom-action { margin-top: 23px; }
+      .footer { margin-top: -35px; }
+    }
+    @media (max-width: 420px) {
+      .site-header, main, .footer { width: calc(100% - 30px); }
+      .brand { font-size: 10px; }
+      .screen-title { font-size: 48px; }
+      .screen-subtitle { font-size: 16px; }
+      .dialog-inner { padding: 29px 23px 25px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">♡</span> Little web surprise</div>
+    <div class="header-note">Made for my favorite person &nbsp;·&nbsp; with love</div>
+  </header>
+
+  <main>
+    <section class="screen active" id="welcome" aria-labelledby="welcome-title">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">A tiny celebration of you</p>
+          <h1 class="hero-title" id="welcome-title"><span>Happy</span><span class="italic">Boyfriend</span><span>Day.</span></h1>
+          <p class="hero-copy">I made a little something for the person who makes ordinary days feel a bit more special.</p>
+          <div class="actions">
+            <button class="btn btn-dark" data-action="start">Open your surprise <span class="arrow" aria-hidden="true">↗</span></button>
+            <button class="btn btn-light" data-action="nope">Not now</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="envelope-art"><div class="envelope-seal">♡</div></div>
+          <div class="envelope-tag">For you, always</div>
+          <div class="scribble">xoxo</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen centered" id="letter" aria-labelledby="letter-title">
+      <div class="progress">01 <span></span> a little note</div>
+      <p class="eyebrow" style="justify-content:center">First things first</p>
+      <h2 class="screen-title" id="letter-title">A note from me<br><em>to you.</em></h2>
+      <p class="screen-subtitle">Every good story deserves a letter. Tap the envelope to open yours.</p>
+      <div class="letter-wrap">
+        <button class="letter-envelope" id="letter-envelope" aria-label="Buka amplop surat" aria-expanded="false">
+          <span class="letter-flap" aria-hidden="true"></span>
+          <span class="seal" aria-hidden="true">♡</span>
+          <span class="letter-paper" aria-hidden="true">
+            <small>To my favorite person</small>
+            <h3>Hey, you.</h3>
+            <p>Thank you for being my safe place, my biggest laugh, and my favorite hello. I hope you know how loved you are—today and every day.</p>
+          </span>
+        </button>
+        <p class="letter-help" id="letter-help">Psst… the letter is inside.</p>
+      </div>
+      <div class="letter-actions">
+        <button class="btn btn-dark" data-action="to-memories">See what else I made <span class="arrow" aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="screen centered" id="memories" aria-labelledby="memories-title">
+      <div class="progress">02 <span></span> little things about you</div>
+      <p class="eyebrow" style="justify-content:center">Open any envelope</p>
+      <h2 class="screen-title" id="memories-title">Three little things<br><em>for you.</em></h2>
+      <p class="screen-subtitle">A tiny report, a few reasons, and one very important question.</p>
+      <div class="cards">
+        <button class="memory-card" data-panel="report" aria-haspopup="dialog">
+          <span class="card-number">01 / THE OFFICIAL REVIEW</span><span class="card-arrow" aria-hidden="true">↗</span>
+          <span class="card-illustration" aria-hidden="true">✳</span>
+          <span class="card-bottom"><h3>Boyfriend report</h3><p>An extremely serious evaluation. (Not really.)</p></span>
+        </button>
+        <button class="memory-card" data-panel="reasons" aria-haspopup="dialog">
+          <span class="card-number">02 / A SHORT LIST</span><span class="card-arrow" aria-hidden="true">↗</span>
+          <span class="card-illustration" aria-hidden="true">♡</span>
+          <span class="card-bottom"><h3>Why you're special</h3><p>Just a few of my favorite things about you.</p></span>
+        </button>
+        <button class="memory-card" data-panel="quiz" aria-haspopup="dialog">
+          <span class="card-number">03 / ONE QUESTION</span><span class="card-arrow" aria-hidden="true">↗</span>
+          <span class="card-illustration" aria-hidden="true">?</span>
+          <span class="card-bottom"><h3>Our tiny quiz</h3><p>There is a correct answer. Just saying.</p></span>
+        </button>
+      </div>
+      <div class="bottom-action"><button class="btn-text" data-action="finish">Skip to the last page →</button></div>
+    </section>
+
+    <section class="screen centered" id="ending" aria-labelledby="ending-title">
+      <div class="progress">03 <span></span> the last little note</div>
+      <p class="eyebrow" style="justify-content:center">That's the whole surprise</p>
+      <article class="paper-card">
+        <p class="eyebrow">To my favorite person</p>
+        <h2 id="ending-title">Thank you for being <em>you.</em></h2>
+        <p>For all the little moments, the laughs that last too long, and the comfort of having you by my side—thank you. I hope today reminds you just how much you mean to me.</p>
+        <p>You make my world a little softer, a little brighter, and a whole lot more fun.</p>
+        <div class="signature">All my love, always ♡</div>
+      </article>
+      <div class="final-actions"><button class="btn btn-dark" data-action="replay">Replay our little story <span class="arrow" aria-hidden="true">↻</span></button></div>
+    </section>
+  </main>
+
+  <footer class="footer"><span>A little page, a lot of love.</span><span>Made just for you ♡</span></footer>
+
+  <dialog id="detail-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" aria-label="Tutup" data-action="close-dialog">×</button>
+      <div id="panel-report" class="panel" hidden>
+        <p class="dialog-kicker">The official review · 2025–∞</p>
+        <h2 class="dialog-title" id="dialog-title">Boyfriend report card</h2>
+        <p class="dialog-copy">After an extensive and definitely scientific review…</p>
+        <div class="report-list">
+          <div class="report-row"><strong>Making me laugh</strong><span class="grade">A+</span><div class="bar"><span style="width:96%"></span></div></div>
+          <div class="report-row"><strong>Being there for me</strong><span class="grade">A+</span><div class="bar"><span style="width:98%"></span></div></div>
+          <div class="report-row"><strong>Best hugs</strong><span class="grade">A++</span><div class="bar"><span style="width:100%"></span></div></div>
+          <div class="report-row"><strong>Being my favorite</strong><span class="grade">A+++</span><div class="bar"><span style="width:100%"></span></div></div>
+        </div>
+        <p class="report-note">Overall grade: <strong>ridiculously loved</strong> ♡</p>
+      </div>
+      <div id="panel-reasons" class="panel" hidden>
+        <p class="dialog-kicker">A short list · an endless feeling</p>
+        <h2 class="dialog-title" id="dialog-title-reasons">Why you're so special</h2>
+        <p class="dialog-copy">A few of the many reasons, in no particular order:</p>
+        <ol class="reason-list">
+          <li><span>01</span> You make me laugh, even when I try not to.</li>
+          <li><span>02</span> You listen in a way that makes me feel understood.</li>
+          <li><span>03</span> The little things you do never go unnoticed.</li>
+          <li><span>04</span> You make ordinary days feel like my favorite ones.</li>
+          <li><span>05</span> Being with you feels easy, warm, and safe.</li>
+          <li><span>06</span> You're simply, wonderfully you.</li>
+        </ol>
+      </div>
+      <div id="panel-quiz" class="panel" hidden>
+        <p class="dialog-kicker">The very important question</p>
+        <h2 class="dialog-title" id="dialog-title-quiz">Our tiny quiz</h2>
+        <div class="quiz-art" aria-hidden="true">♡</div>
+        <p class="quiz-question">Would you still choose me?</p>
+        <div class="quiz-actions">
+          <button class="btn btn-dark" data-action="quiz-yes">Yes, always ♡</button>
+          <button class="btn btn-light" data-action="quiz-no">Hmm… no</button>
+        </div>
+        <p class="quiz-result" id="quiz-result" aria-live="polite"></p>
+        <div class="dialog-footer" id="quiz-next" hidden><button class="btn btn-dark" data-action="finish">One last thing <span class="arrow" aria-hidden="true">→</span></button></div>
+      </div>
+      <div id="panel-nope" class="panel" hidden>
+        <p class="dialog-kicker" style="text-align:center">Oopsie</p>
+        <svg class="cat" viewBox="0 0 120 104" role="img" aria-label="Ilustrasi kucing kartun">
+          <path d="M21 40 14 8l29 19c11-4 24-4 35 0L107 8l-8 34c6 10 9 21 5 33-7 20-24 25-45 25S20 95 13 75c-4-12 1-26 8-35Z" fill="#171715"/>
+          <path d="M27 45c11-10 55-10 66 0 9 9 8 22 4 31-6 13-20 18-37 18S29 89 23 76c-4-9-5-22 4-31Z" fill="#fffefa"/>
+          <path d="M38 60q7-7 14 0M68 60q7-7 14 0" fill="none" stroke="#171715" stroke-width="3" stroke-linecap="round"/>
+          <path d="m56 70 4 3 4-3" fill="none" stroke="#171715" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M30 70 9 66m22 12L11 82m79-12 21-4M89 78l20 4" fill="none" stroke="#171715" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h2 class="dialog-title" id="dialog-title-nope" style="margin-right:0;text-align:center">That button is shy.</h2>
+        <p class="dialog-copy" style="text-align:center">It seems like this little surprise really wants you to stay. Want to give it another try?</p>
+        <div class="dialog-footer"><button class="btn btn-dark" data-action="retry">Okay, let's try again <span class="arrow" aria-hidden="true">↗</span></button></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    (() => {
+      const screens = [...document.querySelectorAll('.screen')];
+      const dialog = document.getElementById('detail-dialog');
+      const panels = [...document.querySelectorAll('.panel')];
+      const go = (id) => {
+        screens.forEach((screen) => screen.classList.toggle('active', screen.id === id));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      const openPanel = (id) => {
+        panels.forEach((panel) => { panel.hidden = panel.id !== `panel-${id}`; });
+        const labels = { report: 'dialog-title', reasons: 'dialog-title-reasons', quiz: 'dialog-title-quiz', nope: 'dialog-title-nope' };
+        dialog.setAttribute('aria-labelledby', labels[id] || 'dialog-title');
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+      };
+      document.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-action], [data-panel]');
+        if (!button) return;
+        if (button.dataset.panel) { openPanel(button.dataset.panel); return; }
+        switch (button.dataset.action) {
+          case 'start': go('letter'); break;
+          case 'nope': openPanel('nope'); break;
+          case 'retry': dialog.close(); go('welcome'); break;
+          case 'close-dialog': dialog.close(); break;
+          case 'to-memories': go('memories'); break;
+          case 'finish': dialog.close(); go('ending'); break;
+          case 'replay': dialog.close(); go('welcome'); break;
+          case 'quiz-yes':
+            document.getElementById('quiz-result').textContent = 'Correct answer. I would choose you in every lifetime. ♡';
+            document.getElementById('quiz-next').hidden = false;
+            break;
+          case 'quiz-no':
+            document.getElementById('quiz-result').textContent = 'Hmm, I think that might have been a typo. Try that again? ☺';
+            break;
+        }
+      });
+      const envelope = document.getElementById('letter-envelope');
+      envelope.addEventListener('click', () => {
+        const isOpen = envelope.classList.toggle('open');
+        envelope.setAttribute('aria-expanded', String(isOpen));
+        document.getElementById('letter-help').textContent = isOpen ? 'A little reminder: you are so very loved. ♡' : 'Psst… the letter is inside.';
+      });
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    })();
+  </script>
+</body>
+</html>
